@@ -1,0 +1,18 @@
+---
+
+- name: Reload Nginx Container
+  community.docker.docker_container:
+    name: nginx
+    image: nginx:latest
+    recreate: yes
+    ports:
+      - "80:80"
+    volumes:
+      - "/tmp/index.html:/usr/share/nginx/html/index.html:ro"
+    restart_policy: always
+    log_driver: awslogs
+    log_options:
+      awslogs-group: "nginx-logs"
+      awslogs-region: "{{ aws_region }}"
+      awslogs-create-group: "true"
+      awslogs-stream: "{{ inventory_hostname }}"

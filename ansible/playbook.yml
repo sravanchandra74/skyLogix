@@ -1,0 +1,22 @@
+---
+
+- name: Deploy Docker Nginx with Custom Index Page
+  hosts: nginx-servers
+  become: true
+  vars:
+    server_id: "{{ hostvars[inventory_hostname]['server_id'] }}"
+    aws_region: "{{ aws_region }}"
+
+  pre_tasks:
+    - name: Wait for SSH to become available from bastion
+      wait_for_connection:
+        timeout: 30       # Max time in seconds to wait for connection
+        sleep: 5          # Time between connection attempts
+        delay: 0          # Start checking immediately
+      register: ssh_check
+      retries: 5
+      delay: 10
+      until: ssh_check is succeeded
+
+  roles:
+    - ./docker-nginx

@@ -1,0 +1,4 @@
+---
+
+aws_region: "eu-north-1"
+user: "ec2-user"
