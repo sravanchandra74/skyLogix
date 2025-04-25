@@ -105,4 +105,9 @@ The following architectural design is implemented to achieve the objectives:
     * Sends Docker logs to CloudWatch Logs for live streaming from private EC2s
 
 * Cloudwatch Log Streams
-    
+![image](https://github.com/user-attachments/assets/b21ec37f-f018-493c-86d1-54e31cde33ba)
+![image](https://github.com/user-attachments/assets/5e89c60f-dfd0-49aa-842a-5d5081c567ff)
+![image](https://github.com/user-attachments/assets/07cee849-4de1-43e4-9090-3759874db325)
+
+
+
