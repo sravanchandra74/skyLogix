@@ -1,0 +1,60 @@
+---
+
+- name: Install Docker
+  yum:
+    name: docker
+    state: present
+
+- name: Start and enable Docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Create Nginx configuration directory
+  file:
+    path: /etc/nginx/conf.d
+    state: directory
+
+- name: Copy Nginx configuration with Jinja2 template
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/conf.d/default.conf
+  notify: Reload Nginx Container
+
+- name: Create index.html with Jinja2 template
+  template:
+    src: index.html.j2
+    dest: /tmp/index.html
+
+- name: Pull latest Nginx Docker image
+  community.docker.docker_image:
+    name: nginx
+    source: pull
+
+- name: Run Nginx Docker container
+  community.docker.docker_container:
+    name: nginx
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - "/tmp/index.html:/usr/share/nginx/html/index.html:ro"
+    restart_policy: always
+    log_driver: awslogs
+    log_options:
+      awslogs-group: "nginx-logs"
+      awslogs-region: "{{ aws_region }}"
+      awslogs-create-group: "true"
+      awslogs-stream: "{{ inventory_hostname }}"
+  register: nginx_container
+
+- name: Gather info about nginx container
+  docker_container_info:
+    name: nginx
+  register: nginx_container_info
+
+- name: Show Docker container status
+  debug:
+    msg: "{{ nginx_container_info.container.State.Status | default('not found') }}"
+
