@@ -119,5 +119,9 @@ ALB automatically scales its capacity to handle changes in traffic when docker c
 ![image](https://github.com/user-attachments/assets/5e89c60f-dfd0-49aa-842a-5d5081c567ff)
 ![image](https://github.com/user-attachments/assets/07cee849-4de1-43e4-9090-3759874db325)
 
-
+* References
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources
+https://docs.ansible.com/ansible/latest/collections/community/docker/docker_image_module.html
+https://github.com/sravanchandra74/AWS-AIOps
+https://docs.docker.com/engine/logging/drivers/awslogs/
 
