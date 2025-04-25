@@ -108,20 +108,32 @@ The following architectural design is implemented to achieve the objectives:
     * Creates nginx-logs group in CloudWatch
     * Sends Docker logs to CloudWatch Logs for live streaming from private EC2s
 
-* Nature of ALB
-ALB automatically scales its capacity to handle changes in traffic when docker containers are stopped
-![image](https://github.com/user-attachments/assets/7e919947-edcb-48a4-b7ea-840dd75f8c42)
-![image](https://github.com/user-attachments/assets/43344004-b189-4729-8202-450f98c8f496)
-![image](https://github.com/user-attachments/assets/696e65dc-a770-4959-86f8-d3e66efbd65b)
- 
-* Cloudwatch Log Streams
-![image](https://github.com/user-attachments/assets/b21ec37f-f018-493c-86d1-54e31cde33ba)
-![image](https://github.com/user-attachments/assets/5e89c60f-dfd0-49aa-842a-5d5081c567ff)
-![image](https://github.com/user-attachments/assets/07cee849-4de1-43e4-9090-3759874db325)
+## Run the run.sh File
 
-* References
-https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources
-https://docs.ansible.com/ansible/latest/collections/community/docker/docker_image_module.html
-https://github.com/sravanchandra74/AWS-AIOps
-https://docs.docker.com/engine/logging/drivers/awslogs/
+* It is an interactive script which needs to choose the option for provisioning or deploying and destroying the AWS services.
+* For Terraform infrastructure provisioning and Ansible script execution, choose option \[1].
+* For destroying the infrastructure and deployment, choose option \[2].
+* For exiting the process or come out of shell, choose option \[3].
+
+##   Nature of ALB
+
+ALB automatically scales its capacity to handle changes in traffic when Docker containers are stopped.
+
+![ALB Scaling 1](https://github.com/user-attachments/assets/7e919947-edcb-48a4-b7ea-840dd75f8c42)
+![ALB Scaling 2](https://github.com/user-attachments/assets/43344004-b189-4729-8202-450f98c8f496)
+![ALB Scaling 3](https://github.com/user-attachments/assets/696e65dc-a770-4959-86f8-d3e66efbd65b)
+
+##   CloudWatch Log Streams
+
+![CloudWatch Logs 1](https://github.com/user-attachments/assets/b21ec37f-f018-493c-86d1-54e31cde33ba)
+![CloudWatch Logs 2](https://github.com/user-attachments/assets/5e89c60f-dfd0-49aa-842a-5d5081c567ff)
+![CloudWatch Logs 3](https://github.com/user-attachments/assets/07cee849-4de1-43e4-9090-3759874db325)
+
+##   References
+
+* [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources)
+* [Ansible Docker Module](https://docs.ansible.com/ansible/latest/collections/community/docker/docker_image_module.html)
+* [AWS-AIOps Repo](https://github.com/sravanchandra74/AWS-AIOps)
+* [Docker AWSLogs Logging Driver](https://docs.docker.com/engine/logging/drivers/awslogs/)
+
 
