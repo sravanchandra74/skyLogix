@@ -32,9 +32,12 @@
             └── templates/
                 ├── nginx.conf.j2
                 └── index.html.j2
+        └── playbook.yml
+        └── ansible.cfg
     ├── run.sh
+    ├── README.md
 
-## Change the directory path where you cloned the repository (pwd)
+## Change the path of directory where you cloned the repository (pwd)
 ## run.sh File Paths
 
     TERRAFORM_DIR="~/skyLogix/terraform"
@@ -72,6 +75,7 @@
 ## Architectural Design
 
 The following architectural design is implemented to achieve the objectives:
+![image](https://github.com/user-attachments/assets/89123d5e-22f5-4847-96f6-c87bb98cb32f)
 
 ### Core Components
 
@@ -87,7 +91,7 @@ The following architectural design is implemented to achieve the objectives:
         * NAT Gateway (to provide internet access to private subnet)
     * EC2 Instances:
         * Bastion Host in 1 public subnet
-        * 3 EC2 instances in private subnet (no direct internet access)
+        * 3 EC2 instances in 1 private subnet (no direct internet access)
     * ALB: Application Load Balancer deployed in public subnets
     * Elastic IP: Associated with the NAT Gateway
     * Route Tables: For both public and private subnets
@@ -101,9 +105,15 @@ The following architectural design is implemented to achieve the objectives:
 * Ansible Playbook
     * Installs Docker on all private EC2 instances
     * Pulls, tags, and runs the Nginx container
-    * Creates nginx-logs group
+    * Creates nginx-logs group in CloudWatch
     * Sends Docker logs to CloudWatch Logs for live streaming from private EC2s
 
+* Nature of ALB
+ALB automatically scales its capacity to handle changes in traffic when docker containers are stopped
+![image](https://github.com/user-attachments/assets/7e919947-edcb-48a4-b7ea-840dd75f8c42)
+![image](https://github.com/user-attachments/assets/43344004-b189-4729-8202-450f98c8f496)
+![image](https://github.com/user-attachments/assets/696e65dc-a770-4959-86f8-d3e66efbd65b)
+ 
 * Cloudwatch Log Streams
 ![image](https://github.com/user-attachments/assets/b21ec37f-f018-493c-86d1-54e31cde33ba)
 ![image](https://github.com/user-attachments/assets/5e89c60f-dfd0-49aa-842a-5d5081c567ff)
