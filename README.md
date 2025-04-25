@@ -34,45 +34,44 @@
                 └── index.html.j2
     ├── run.sh
 
+## Change the directory path where you cloned the repository (pwd)
 ## run.sh File Paths
 
-    TERRAFORM_DIR="/skyLogix/terraform"
-    KEY_FILE_PEM="/skyLogix/bastion_access_key.pem"
+    TERRAFORM_DIR="~/skyLogix/terraform"
+    KEY_FILE_PEM="~/skyLogix/bastion_access_key.pem"
 
 ## terraform/ec2.tf File Paths
 
 * For bastion aws\_instance resource:
 
-        source = "/skyLogix/bastion_access_key.pem"
+        source = "~/skyLogix/bastion_access_key.pem"
 
 * At resource local\_file "hosts\_file":
 
-        filename = "/skyLogix/hosts"
+        filename = "~/skyLogix/hosts"
 
 * At resource null\_resource "copy\_ansible\_config":
 
-        source = "/skyLogix/ansible/ansible.cfg"
-        source = "/skyLogix/hosts"
-        source = "/skyLogix/ansible"
+        source = "~/skyLogix/ansible/ansible.cfg"
+        source = "~/skyLogix/hosts"
+        source = "~/skyLogix/ansible"
 
 ## terraform/network.tf File Paths
 
     resource "local_file" "bastion_private_key" {
-      filename = "/skyLogix/bastion_access_key.pem"
+      filename = "~/skyLogix/bastion_access_key.pem"
     }
 
 ## terraform/variable.tf File
 
     variable "allowed_ssh_cidrs" {
       type    = list(string)
-      default = ["/32"] # IMPORTANT: Replace with your actual IP!
+      default = ["<your-ip>/32"] # IMPORTANT: Replace with your actual IP!
     }
 
 ## Architectural Design
 
 The following architectural design is implemented to achieve the objectives:
-![image](https://github.com/user-attachments/assets/e1225f0a-679b-49f3-8012-d4fdc79cd995)
-
 
 ### Core Components
 
@@ -87,7 +86,7 @@ The following architectural design is implemented to achieve the objectives:
         * Internet Gateway (for inbound/outbound internet traffic)
         * NAT Gateway (to provide internet access to private subnet)
     * EC2 Instances:
-        * Bastion Host in each public subnet
+        * Bastion Host in 1 public subnet
         * 3 EC2 instances in private subnet (no direct internet access)
     * ALB: Application Load Balancer deployed in public subnets
     * Elastic IP: Associated with the NAT Gateway
@@ -104,3 +103,6 @@ The following architectural design is implemented to achieve the objectives:
     * Pulls, tags, and runs the Nginx container
     * Creates nginx-logs group
     * Sends Docker logs to CloudWatch Logs for live streaming from private EC2s
+
+* Cloudwatch Log Streams
+    
