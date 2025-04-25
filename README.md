@@ -1,92 +1,104 @@
-# skyLogix
-SkyLogix (Cloud + Logs + Infra) Solution for the Technical code challenge
-
 ## Pre-requisites
 
 * Terraform installed on local/remote machine
 * Git installed on local/remote machine
-* Virtual Studio Code or IntelliJ or any other preferred tool
+* Visual Studio Code, IntelliJ, or any preferred IDE
 * AWS account
-* AWS account integrated with Virtual Studio Code with `access_key` and `secret_access_key` using `TF_VARS`
+* AWS account integrated with VS Code using access\_key and secret\_access\_key via TF\_VARS
 * Clone the Git repository: skyLogix
 
 ## Directory Structure
 
+    skyLogix/
+    ├── terraform/
+    │   ├── main.tf
+    │   ├── ec2.tf
+    │   ├── network.tf
+    │   ├── alb.tf
+    │   ├── variable.tf
+    │   ├── output.tf
+    │   ├── iam.tf
+    │   └── provider.tf
+    └── ansible/
+        └── docker-nginx/
+            ├── tasks/
+            │   └── main.yml
+            ├── vars/
+            │   └── main.yml
+            ├── meta/
+            │   └── main.yml
+            ├── handlers/
+            │   └── main.yml
+            └── templates/
+                ├── nginx.conf.j2
+                └── index.html.j2
+    ├── run.sh
 
-skyLogix/
-├── terraform/
-│ ├── main.tf
-│ ├── ec2.tf
-│ ├── network.tf
-│ ├── alb.tf
-│ ├── variable.tf
-│ ├── output.tf
-│ ├── iam.tf
-│ └── provider.tf
-└── ansible/
-└── docker-nginx/
-├── tasks/
-│ └── main.yml
-├── vars/
-│ └── main.yml
-├── meta/
-│ └── main.yml
-├── handlers/
-│ └── main.yml
-└── templates/
-├── nginx.conf.j2
-└── index.html.j2
-run.sh
+## run.sh File Paths
 
-## `run.sh` File Paths
+    TERRAFORM_DIR="/skyLogix/terraform"
+    KEY_FILE_PEM="/skyLogix/bastion_access_key.pem"
 
-```bash
-TERRAFORM_DIR="/skyLogix/terraform"
-KEY_FILE_PEM="/skyLogix/bastion_access_key.pem"
+## terraform/ec2.tf File Paths
 
-terraform/ec2.tf File Paths
-For bastion aws_instance resource:
-source = "/skyLogix/bastion_access_key.pem"
+* For bastion aws\_instance resource:
 
-At resource "local_file" "hosts_file":
-filename = "/skyLogix/hosts"
+        source = "/skyLogix/bastion_access_key.pem"
 
-At resource "null_resource" "copy_ansible_config":
-source = "/skyLogix/ansible/ansible.cfg"
-source = "/skyLogix/hosts"
-source = "/skyLogix/ansible"
+* At resource local\_file "hosts\_file":
 
-network.tf File Paths
-resource "local_file" "bastion_private_key" {
-  filename = "/skyLogix/bastion_access_key.pem"
-}
+        filename = "/skyLogix/hosts"
 
-variable.tf File
-variable "allowed_ssh_cidrs" {
-  type    = list(string)
-  default = ["/32"] # IMPORTANT: Replace with your actual IP!
-}
+* At resource null\_resource "copy\_ansible\_config":
 
-Architectural Design
-![alt text](image.png)
+        source = "/skyLogix/ansible/ansible.cfg"
+        source = "/skyLogix/hosts"
+        source = "/skyLogix/ansible"
+
+## terraform/network.tf File Paths
+
+    resource "local_file" "bastion_private_key" {
+      filename = "/skyLogix/bastion_access_key.pem"
+    }
+
+## terraform/variable.tf File
+
+    variable "allowed_ssh_cidrs" {
+      type    = list(string)
+      default = ["/32"] # IMPORTANT: Replace with your actual IP!
+    }
+
+## Architectural Design
+
 The following architectural design is implemented to achieve the objectives:
-Core Components
-Terraform Provisioning:
-AWS Cloud region: eu-north-1
-AWS Virtual Private Cloud (VPC) with the CIDR range: 10.161.0.0/24 (256 IPs)
-2 Availability Zones (AZs): eu-north-1a and eu-north-1b
-2 public subnets in each of the availability zones and 1 private subnet in one availability zone.
-A NAT Gateway to allow traffic from the private subnet to the internet.
-An Internet Gateway to allow traffic to and from the internet to public and private subnets.
-Bastion host (AWS EC2 Instance) and NAT Gateway in each public subnet, and 3 EC2 instances in the private subnet (which doesn't have access to the internet).
-Application Load Balancer (ALB) applied on public subnets.
-An Elastic IP is set up and configured with the NAT Gateway within the VPC.
-Route table setup for both the public and private subnets for incoming and outgoing traffic.
-Security Groups (SGs) and rules for the public subnet (bastion host), private subnet, and ALB.
-SG rules allow the bastion host to connect to the instances in the private subnet (unidirectional).
-For the EC2 instances, the OS image AMI is Amazon Linux.
-SSH key pairs and a PEM file are used to SSH to the bastion host and from the bastion host to the private EC2 instances.
-IAM roles and policies are established for CloudWatch logs (from private EC2 instances).
-Ansible Playbook:
-Installation of Docker in all private EC2 instances.
-Pull, tag, run the Nginx image and create nginx-logs group from Docker Community which fetch the docker logs from private ec2-instances to Cloudwatch for live streaming of logs from Docker Community
+
+### Core Components
+
+* Terraform Provisioning
+    * AWS Region: eu-north-1
+    * VPC CIDR: 10.161.0.0/24 (256 IPs)
+    * Availability Zones: eu-north-1a, eu-north-1b
+    * Subnets:
+        * 2 public subnets (one in each AZ)
+        * 1 private subnet (in one AZ)
+    * Gateways:
+        * Internet Gateway (for inbound/outbound internet traffic)
+        * NAT Gateway (to provide internet access to private subnet)
+    * EC2 Instances:
+        * Bastion Host in each public subnet
+        * 3 EC2 instances in private subnet (no direct internet access)
+    * ALB: Application Load Balancer deployed in public subnets
+    * Elastic IP: Associated with the NAT Gateway
+    * Route Tables: For both public and private subnets
+    * Security Groups:
+        * SG for Bastion (SSH access)
+        * SG for private EC2 (access from Bastion only)
+        * SG for ALB
+    * Key Pairs: PEM file used to SSH into Bastion and from Bastion to private EC2s
+    * AMI: Amazon Linux for all EC2 instances
+    * IAM Roles/Policies: For enabling CloudWatch log access
+* Ansible Playbook
+    * Installs Docker on all private EC2 instances
+    * Pulls, tags, and runs the Nginx container
+    * Creates nginx-logs group
+    * Sends Docker logs to CloudWatch Logs for live streaming from private EC2s
