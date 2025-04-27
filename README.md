@@ -36,6 +36,7 @@
         └── ansible.cfg
     ├── run.sh
     ├── README.md
+    ├── LICENSE
 
 ## Change the path of directory where you cloned the repository (pwd)
 ## run.sh File Paths
