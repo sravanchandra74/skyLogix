@@ -75,7 +75,8 @@
 ## Architectural Design
 
 The following architectural design is implemented to achieve the objectives:
-![image](https://github.com/user-attachments/assets/89123d5e-22f5-4847-96f6-c87bb98cb32f)
+![image](https://github.com/user-attachments/assets/7411d7d2-4512-47d8-ae3e-3de670281d9e)
+
 
 ### Core Components
 
